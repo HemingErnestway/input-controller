@@ -1,8 +1,7 @@
 import { InputController } from "./input-controller.js";
 
-const inputController = new InputController();
 
-inputController.bindActions({
+const actions = {
     "left": {
         keys: [37, 65],
         enabled: false,
@@ -16,16 +15,39 @@ inputController.bindActions({
     "down": {
         keys: [40, 83],
     },
+};
+
+const inputController = new InputController();
+inputController.bindActions(actions);
+
+function updateStatus(actionName) {
+    const actionStatus = document.querySelector(`#status-${actionName}`);
+    const enabled = actions[actionName].enabled ?? true;
+    actionStatus.textContent = enabled ? " enabled" : "disabled";
+    actionStatus.setAttribute("class", enabled ? "good" : "bad");
+}
+
+Object.keys(actions).forEach(actionName => {
+    document.querySelector(`#enable-${actionName}`).addEventListener("click", () => {
+        inputController.enableAction(actionName);
+        Object.assign(actions[actionName], { enabled: true });
+        updateStatus(actionName);
+    });
+
+    document.querySelector(`#disable-${actionName}`).addEventListener("click", () => {
+        inputController.disableAction(actionName);
+        Object.assign(actions[actionName], { enabled: false });
+        updateStatus(actionName);
+    });
+
+    updateStatus(actionName);
 });
 
 const box = document.querySelector("#box");
-
-// document.addEventListener("keydown", (e) => console.log(e.keyCode))
-
 inputController.attach(box);
 
 const coords = { x: 0, y: 0 };
-const step = 50;
+const step = 10;
 
 box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
     const shift 

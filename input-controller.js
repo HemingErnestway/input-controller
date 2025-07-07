@@ -19,9 +19,11 @@ export class InputController {
     }
 
     enableAction(actionName) {
+        this.#actions[actionName].enabled = true;
     }
 
     disableAction(actionName) {
+        this.#actions[actionName].enabled = false;
     }
 
     attach(target, dontEnable = false) {
@@ -30,9 +32,14 @@ export class InputController {
                 .keys(this.#actions)
                 .find(action => this.#actions[action].keys.includes(e.keyCode));
 
-            action && target.dispatchEvent(
+            if (!this.#actions[action].enabled) return;
+
+            target.dispatchEvent(
                 new CustomEvent(this.ACTION_ACTIVATED, {
-                    detail: { action },
+                    detail: { 
+                        action,
+                        enabled: this.#actions[action].enabled,
+                    },
                 })
             );
         });
@@ -42,9 +49,14 @@ export class InputController {
                 .keys(this.#actions)
                 .find(action => this.#actions[action].keys.includes(e.keyCode));
 
-            action && target.dispatchEvent(
+            if (!this.#actions[action].enabled) return;
+
+            target.dispatchEvent(
                 new CustomEvent(this.ACTION_DEACTIVATED, {
-                    detail: { action },
+                    detail: { 
+                        action,
+                        enabled: this.#actions[action].enabled,
+                    },
                 })
             );
         });
