@@ -32,7 +32,9 @@ export class InputController {
                 .keys(this.#actions)
                 .find(action => this.#actions[action].keys.includes(e.keyCode));
 
-            if (this.#actions[action] === undefined || !this.#actions[action].enabled) {
+            if (!this.enabled || 
+                this.#actions[action] === undefined ||
+                !this.#actions[action].enabled) {
                 return;
             }
 
@@ -51,7 +53,9 @@ export class InputController {
                 .keys(this.#actions)
                 .find(action => this.#actions[action].keys.includes(e.keyCode));
 
-            if (this.#actions[action] === undefined || !this.#actions[action].enabled) {
+            if (!this.enabled || 
+                this.#actions[action] === undefined ||
+                !this.#actions[action].enabled) {
                 return;
             }
 

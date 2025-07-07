@@ -1,6 +1,8 @@
 import { InputController } from "./input-controller.js";
 
-const actions = {
+const inputController = new InputController();
+
+inputController.bindActions({
     "left": {
         keys: [37, 65],
         enabled: false,
@@ -14,10 +16,7 @@ const actions = {
     "down": {
         keys: [40, 83],
     },
-};
-
-const inputController = new InputController();
-inputController.bindActions(actions);
+});
 
 function updateStatuses() {
     const actions = inputController.getActions();
@@ -27,6 +26,13 @@ function updateStatuses() {
         actionStatus.textContent = enabled ? "enabled" : "disabled";
         actionStatus.setAttribute("class", enabled ? "good" : "bad");
     });
+
+    const statusAttached = document.querySelector("#status-attached");
+    // ...
+
+    const statusEnabled = document.querySelector("#status-enabled");
+    statusEnabled.textContent = inputController.enabled ? "enabled" : "disabled";
+    statusEnabled.setAttribute("class", inputController.enabled ? "good" : "bad");
 }
 
 function renderActionList() {
@@ -73,6 +79,16 @@ function addStatusListeners() {
             updateStatuses();
         });
 
+        updateStatuses();
+    });
+
+    document.querySelector("#enable-controller").addEventListener("click", () => {
+        inputController.enabled = true;
+        updateStatuses();
+    });
+
+    document.querySelector("#disable-controller").addEventListener("click", () => {
+        inputController.enabled = false;
         updateStatuses();
     });
 }

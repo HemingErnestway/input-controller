@@ -29,7 +29,7 @@
             font-size: 16px;
         }
 
-        #actions li .wrapper {
+        li .wrapper {
             margin-bottom: 10px;
             min-width: 300px;
             display: flex;
@@ -47,7 +47,6 @@
 </head>
 <body>
     <div id="box"></div>
-
     <div id="info">
         <p>actions</p>
         <ul id="actions"></ul>
@@ -55,6 +54,27 @@
         <ul>
             <li>
                 <button id="bind-space">bind</button>
+            </li>
+        </ul>
+        <p>controller</p>
+        <ul>
+            <li>
+                <div class="wrapper">
+                    <span id="status-attached">attached</span>
+                    <div>
+                        <button id="attach-controller">attach</button>
+                        <button id="detach-controller">detach</button>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="wrapper">
+                    <span id="status-enabled">enabled</span>
+                    <div>
+                        <button id="enable-controller">enable</button>
+                        <button id="disable-controller">disable</button>
+                    </div>
+                </div>
             </li>
         </ul>
     </div>
