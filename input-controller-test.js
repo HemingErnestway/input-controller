@@ -1,6 +1,5 @@
 import { InputController } from "./input-controller.js";
 
-
 const actions = {
     "left": {
         keys: [37, 65],
@@ -20,28 +19,66 @@ const actions = {
 const inputController = new InputController();
 inputController.bindActions(actions);
 
-function updateStatus(actionName) {
-    const actionStatus = document.querySelector(`#status-${actionName}`);
-    const enabled = actions[actionName].enabled ?? true;
-    actionStatus.textContent = enabled ? " enabled" : "disabled";
-    actionStatus.setAttribute("class", enabled ? "good" : "bad");
+function updateStatuses() {
+    const actions = inputController.getActions();
+    Object.keys(inputController.getActions()).forEach(actionName => {
+        const actionStatus = document.querySelector(`#status-${actionName}`);
+        const enabled = actions[actionName].enabled ?? true;
+        actionStatus.textContent = enabled ? "enabled" : "disabled";
+        actionStatus.setAttribute("class", enabled ? "good" : "bad");
+    });
 }
 
-Object.keys(actions).forEach(actionName => {
-    document.querySelector(`#enable-${actionName}`).addEventListener("click", () => {
-        inputController.enableAction(actionName);
-        Object.assign(actions[actionName], { enabled: true });
-        updateStatus(actionName);
-    });
+function renderActionList() {
+    const actions = inputController.getActions();
+    const actionList = document.querySelector("#actions");
+    actionList.innerHTML = "";
 
-    document.querySelector(`#disable-${actionName}`).addEventListener("click", () => {
-        inputController.disableAction(actionName);
-        Object.assign(actions[actionName], { enabled: false });
-        updateStatus(actionName);
+    Object.keys(actions).forEach(actionName => {
+        actionList.innerHTML += `
+            <li>
+                <div class="wrapper">
+                    <div>${actionName} (<span id="status-${actionName}"></span>)</div>
+                    <div>
+                        <button id="enable-${actionName}">enable</button>
+                        <button id="disable-${actionName}">disable</button>
+                    </div>
+                </div>
+            </li>
+        `;
     });
+}
 
-    updateStatus(actionName);
-});
+function addStatusListeners() {
+    Object.keys(inputController.getActions()).forEach(actionName => {
+        document.querySelector(`#enable-${actionName}`).addEventListener("click", () => {
+            inputController.enableAction(actionName);
+            inputController.bindActions({ 
+                [actionName]: { 
+                    keys: inputController.getActions()[actionName].keys,
+                    enabled: true,
+                }
+            });
+            updateStatuses();
+        });
+
+        document.querySelector(`#disable-${actionName}`).addEventListener("click", () => {
+            inputController.disableAction(actionName);
+            inputController.bindActions({ 
+                [actionName]: { 
+                    keys: inputController.getActions()[actionName].keys,
+                    enabled: false,
+                }
+            });
+            updateStatuses();
+        });
+
+        updateStatuses();
+    });
+}
+
+renderActionList();
+addStatusListeners();
 
 const box = document.querySelector("#box");
 inputController.attach(box);
@@ -50,6 +87,11 @@ const coords = { x: 0, y: 0 };
 const step = 10;
 
 box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
+    if (e.detail.action === "space") {
+        box.style.backgroundColor = box.style.backgroundColor === "red" ? "black" : "red";
+        return;
+    }
+
     const shift 
         = e.detail.action === "left" ? { x: -step, y: 0 }
         : e.detail.action === "up" ? { x: 0, y: -step }
@@ -68,3 +110,15 @@ box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
 box.addEventListener(inputController.ACTION_DEACTIVATED, (e) => {
     // console.log(e.detail);
 });
+
+document.querySelector("#bind-space").addEventListener("click", () => {
+    inputController.bindActions({
+        "space": {
+            keys: [32],
+        }
+    });
+    renderActionList();
+    addStatusListeners();
+});
+
+// document.addEventListener("keydown", (e) => console.log(e.keyCode))

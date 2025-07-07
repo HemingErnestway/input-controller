@@ -32,7 +32,9 @@ export class InputController {
                 .keys(this.#actions)
                 .find(action => this.#actions[action].keys.includes(e.keyCode));
 
-            if (!this.#actions[action].enabled) return;
+            if (this.#actions[action] === undefined || !this.#actions[action].enabled) {
+                return;
+            }
 
             target.dispatchEvent(
                 new CustomEvent(this.ACTION_ACTIVATED, {
@@ -49,7 +51,9 @@ export class InputController {
                 .keys(this.#actions)
                 .find(action => this.#actions[action].keys.includes(e.keyCode));
 
-            if (!this.#actions[action].enabled) return;
+            if (this.#actions[action] === undefined || !this.#actions[action].enabled) {
+                return;
+            }
 
             target.dispatchEvent(
                 new CustomEvent(this.ACTION_DEACTIVATED, {
@@ -69,5 +73,9 @@ export class InputController {
     }
 
     isKeyPressed(keyCode) {
+    }
+
+    getActions() {
+        return this.#actions;
     }
 }

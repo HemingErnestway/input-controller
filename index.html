@@ -29,6 +29,13 @@
             font-size: 16px;
         }
 
+        #actions li .wrapper {
+            margin-bottom: 10px;
+            min-width: 300px;
+            display: flex;
+            justify-content: space-between;
+        }
+
         .good {
             color: green;
         }
@@ -43,26 +50,11 @@
 
     <div id="info">
         <p>actions</p>
+        <ul id="actions"></ul>
+        <p>bind space action</p>
         <ul>
             <li>
-                left....<span id="status-left"></span>
-                <button id="enable-left">enable</button>
-                <button id="disable-left">disable</button>
-            </li>
-            <li>
-                up......<span id="status-up"></span>
-                <button id="enable-up">enable</button>
-                <button id="disable-up">disable</button>
-            </li>
-            <li>
-                right...<span id="status-right"></span>
-                <button id="enable-right">enable</button>
-                <button id="disable-right">disable</button>
-            </li>
-            <li>
-                down....<span id="status-down"></span>
-                <button id="enable-down">enable</button>
-                <button id="disable-down">disable</button>
+                <button id="bind-space">bind</button>
             </li>
         </ul>
     </div>
