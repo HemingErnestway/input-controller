@@ -111,8 +111,4 @@ export class InputController {
     getActions() {
         return this.#actions;
     }
-
-    getKeys() {
-        return this.#keys;
-    }
 }
