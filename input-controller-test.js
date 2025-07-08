@@ -61,7 +61,8 @@ function renderActionList() {
             <li>
                 <div class="wrapper">
                     <div>
-                        ${actionName} (<span id="status-${actionName}"></span>)
+                        <span id="action-${actionName}">${actionName}</span>
+                        (<span id="status-${actionName}"></span>)
                         <span id="active-${actionName}"></span>
                     </div>
                     <div>
@@ -142,14 +143,16 @@ addStatusListeners();
 const coords = { x: 0, y: 0 };
 const step = 10;
 
-function updateActionActive(action) {
-    const actionActive = document.querySelector(`#active-${action}`);
-    actionActive.textContent = inputController.isActionActive(action) ? "A" : "";
+function updateActionActive(actionName) {
+    document.querySelector(`#action-${actionName}`).setAttribute(
+        "class", inputController.isActionActive(actionName) ? "active" : ""
+    );
 }
 
 function updateKeyActive(keyCode) {
-    const key = document.querySelector(`#key-${keyCode}`);
-    key.setAttribute("class", inputController.isKeyPressed(keyCode) ? "active" : "");
+    document.querySelector(`#key-${keyCode}`).setAttribute(
+        "class", inputController.isKeyPressed(keyCode) ? "active" : ""
+    );
 }
 
 box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
