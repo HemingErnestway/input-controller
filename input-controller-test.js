@@ -134,6 +134,18 @@ function addStatusListeners() {
         inputController.enabled = false;
         updateStatuses();
     });
+
+    window.addEventListener("focus", () => {
+        const focusedIndicator = document.querySelector("#window-focus");
+        focusedIndicator.textContent = "focused";
+        focusedIndicator.setAttribute("class", "good");
+    });
+
+    window.addEventListener("blur", () => {
+        const focusedIndicator = document.querySelector("#window-focus");
+        focusedIndicator.textContent = "unfocused";
+        focusedIndicator.setAttribute("class", "bad");
+    });
 }
 
 renderActionList();
