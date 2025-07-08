@@ -13,7 +13,7 @@ const keyNames = {
 };
 
 const inputController = new InputController({
-    "left": { keys: [37, 65], enabled: false },
+    "left": { keys: [37, 65] },
     "up": { keys: [38, 87] },
     "right": { keys: [39, 68] },
     "down": { keys: [40, 83] },
@@ -152,9 +152,6 @@ renderActionList();
 renderKeyList();
 addStatusListeners();
 
-const coords = { x: 0, y: 0 };
-const step = 10;
-
 function updateActionActive(actionName) {
     document.querySelector(`#action-${actionName}`).setAttribute(
         "class", inputController.isActionActive(actionName) ? "active" : ""
@@ -167,21 +164,39 @@ function updateKeyActive(keyCode) {
     );
 }
 
-box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
-    updateActionActive(e.detail.action);
-    updateKeyActive(e.detail.keyCode);
+const coords = { x: 0, y: 0 };
+const step = 5;
 
-    if (e.detail.action === "space") {
-        box.style.backgroundColor = box.style.backgroundColor === "red" ? "black" : "red";
-        return;
-    }
+const moving = {
+    "left": 0,
+    "up": 0,
+    "right": 0,
+    "down": 0,
+};
 
-    const shift 
-        = e.detail.action === "left" ? { x: -step, y: 0 }
-        : e.detail.action === "up" ? { x: 0, y: -step }
-        : e.detail.action === "right" ? { x: step, y: 0 }
-        : e.detail.action === "down" ? { x: 0, y: step }
-        : { x: 0, y: 0 };
+function isMoving() {
+    const res = !Object.values(moving).every(value => value === 0);
+    console.log(res)
+    console.log(Object.values(moving))
+    return res;
+}
+
+function moveBox() {
+    // if (!isMoving()) return;
+
+    // if (action === "space") {
+    //     box.style.backgroundColor = box.style.backgroundColor === "red" ? "black" : "red";
+    //     return;
+    // }
+
+    // console.log(inputController.isActionActive(action), action)
+
+    const shift = { x: 0, y: 0 };
+
+    if (inputController.isActionActive("left")) shift.x += -step;
+    if (inputController.isActionActive("up")) shift.y += -step;
+    if (inputController.isActionActive("right")) shift.x += step;
+    if (inputController.isActionActive("down")) shift.y += step;
 
     coords.x += shift.x;
     coords.y += shift.y;
@@ -189,9 +204,20 @@ box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
     box.style.position = "absolute";
     box.style.left = `${coords.x}px`;
     box.style.top = `${coords.y}px`;
+
+    requestAnimationFrame(moveBox);
+}
+
+requestAnimationFrame(moveBox);
+
+box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
+    moving[e.detail.action] += 1;
+    updateActionActive(e.detail.action);
+    updateKeyActive(e.detail.keyCode);
 });
 
 box.addEventListener(inputController.ACTION_DEACTIVATED, (e) => {
+    moving[e.detail.action] -= 1;
     updateActionActive(e.detail.action);
     updateKeyActive(e.detail.keyCode);
 });

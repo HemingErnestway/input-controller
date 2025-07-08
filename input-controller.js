@@ -20,7 +20,7 @@ export class InputController {
             this.#actions[actionName] = {
                 keys: actionsToBind[actionName].keys,
                 enabled: actionsToBind[actionName].enabled ?? true,
-                active: false,
+                active: new Set(),
             };
 
             actionsToBind[actionName].keys.forEach((key) => {
@@ -48,8 +48,17 @@ export class InputController {
             return;
         }
 
-        this.#actions[action].active = actionEvent === this.ACTION_ACTIVATED;
-        this.#keys[event.keyCode].active = actionEvent === this.ACTION_ACTIVATED;
+        if (actionEvent === this.ACTION_DEACTIVATED) {
+            this.#actions[action].active.delete(event.keyCode);
+            // this.#keys[event.keyCode].active = false;
+        }
+
+        if (this.#actions[action].active.has(event.keyCode)) return;
+
+        if (actionEvent === this.ACTION_ACTIVATED) {
+            this.#actions[action].active.add(event.keyCode);
+            // this.#keys[event.keyCode].active = true;
+        }
 
         target.dispatchEvent(
             new CustomEvent(actionEvent, {
@@ -100,7 +109,7 @@ export class InputController {
     }
 
     isActionActive(action) {
-        return this.#actions[action].active;
+        return this.#actions[action].active.size > 0;
     }
 
     isKeyPressed(keyCode) {
