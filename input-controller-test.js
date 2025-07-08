@@ -3,36 +3,43 @@ import { InputController } from "./input-controller.js";
 const inputController = new InputController();
 
 inputController.bindActions({
-    "left": {
-        keys: [37, 65],
-        enabled: false,
-    },
-    "up": {
-        keys: [38, 87],
-    },
-    "right": {
-        keys: [39, 68],
-    },
-    "down": {
-        keys: [40, 83],
-    },
+    "left": { keys: [37, 65], enabled: false },
+    "up": { keys: [38, 87] },
+    "right": { keys: [39, 68] },
+    "down": { keys: [40, 83] },
 });
+
+function attachBox() {
+    const box = document.querySelector("#box");
+    inputController.attach(box);
+    return true;
+}
+
+function detachBox() {
+    inputController.detach();
+    return false;
+}
+
+let boxAttached = attachBox();
+
+function updateStatus(element, enabled, goodMessage, badMessage) {
+    element.textContent = enabled ? goodMessage : badMessage;
+    element.setAttribute("class", enabled ? "good" : "bad");
+}
 
 function updateStatuses() {
     const actions = inputController.getActions();
-    Object.keys(inputController.getActions()).forEach(actionName => {
+    Object.keys(actions).forEach(actionName => {
         const actionStatus = document.querySelector(`#status-${actionName}`);
         const enabled = actions[actionName].enabled ?? true;
-        actionStatus.textContent = enabled ? "enabled" : "disabled";
-        actionStatus.setAttribute("class", enabled ? "good" : "bad");
+        updateStatus(actionStatus, enabled, "enabled", "disabled");
     });
 
     const statusAttached = document.querySelector("#status-attached");
-    // ...
+    updateStatus(statusAttached, boxAttached, "attached", "detached");
 
     const statusEnabled = document.querySelector("#status-enabled");
-    statusEnabled.textContent = inputController.enabled ? "enabled" : "disabled";
-    statusEnabled.setAttribute("class", inputController.enabled ? "good" : "bad");
+    updateStatus(statusEnabled, inputController.enabled, "enabled", "disabled");
 }
 
 function renderActionList() {
@@ -82,6 +89,16 @@ function addStatusListeners() {
         updateStatuses();
     });
 
+    document.querySelector("#attach-controller").addEventListener("click", () => {
+        boxAttached = attachBox();
+        updateStatuses();
+    });
+
+    document.querySelector("#detach-controller").addEventListener("click", () =>  {
+        boxAttached = detachBox();
+        updateStatuses();
+    });
+
     document.querySelector("#enable-controller").addEventListener("click", () => {
         inputController.enabled = true;
         updateStatuses();
@@ -95,9 +112,6 @@ function addStatusListeners() {
 
 renderActionList();
 addStatusListeners();
-
-const box = document.querySelector("#box");
-inputController.attach(box);
 
 const coords = { x: 0, y: 0 };
 const step = 10;
