@@ -49,7 +49,10 @@ function renderActionList() {
         actionList.innerHTML += `
             <li>
                 <div class="wrapper">
-                    <div>${actionName} (<span id="status-${actionName}"></span>)</div>
+                    <div>
+                        ${actionName} (<span id="status-${actionName}"></span>)
+                        <span id="active-${actionName}"></span>
+                    </div>
                     <div>
                         <button id="enable-${actionName}">enable</button>
                         <button id="disable-${actionName}">disable</button>
@@ -114,7 +117,14 @@ addStatusListeners();
 const coords = { x: 0, y: 0 };
 const step = 10;
 
+function updateActionActive(action) {
+    const actionActive = document.querySelector(`#active-${action}`);
+    actionActive.textContent = inputController.isActionActive(action) ? "A" : "";
+}
+
 box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
+    updateActionActive(e.detail.action);
+
     if (e.detail.action === "space") {
         box.style.backgroundColor = box.style.backgroundColor === "red" ? "black" : "red";
         return;
@@ -136,7 +146,7 @@ box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
 });
 
 box.addEventListener(inputController.ACTION_DEACTIVATED, (e) => {
-    // console.log(e.detail);
+    updateActionActive(e.detail.action);
 });
 
 document.querySelector("#bind-space").addEventListener("click", () => {

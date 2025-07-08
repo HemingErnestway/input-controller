@@ -19,6 +19,7 @@ export class InputController {
             this.#actions[actionName] = {
                 keys: actionsToBind[actionName].keys,
                 enabled: actionsToBind[actionName].enabled ?? true,
+                active: false,
             };
         });
     }
@@ -41,6 +42,8 @@ export class InputController {
             !this.#actions[action].enabled) {
             return;
         }
+
+        this.#actions[action].active = actionEvent === this.ACTION_ACTIVATED;
 
         target.dispatchEvent(
             new CustomEvent(actionEvent, {
@@ -88,6 +91,7 @@ export class InputController {
     }
 
     isActionActive(action) {
+        return this.#actions[action].active;
     }
 
     isKeyPressed(keyCode) {
