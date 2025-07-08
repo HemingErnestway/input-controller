@@ -6,6 +6,7 @@ export class InputController {
 
     #actions = {};
     #keys = {};
+    #keyboardListeners = {};
 
     constructor(actionsToBind = {}, target = null) {
         this.bindActions(actionsToBind);
@@ -72,27 +73,20 @@ export class InputController {
     };
 
     #addKeyboardListener = (event, actionEvent, target) => {
-        if (document._keyboardListeners && document._keyboardListeners[event]) {
-            return;
-        }
+        if (this.#keyboardListeners[event]) return;
 
         const listener = (e) => {
             this.#keyboardHandler(e, actionEvent, target);
         };
 
-        document._keyboardListeners = document._keyboardListeners || {};
-        document._keyboardListeners[event] = listener;
-
+        this.#keyboardListeners[event] = listener;
         document.addEventListener(event, listener);
     };
 
     #removeKeyboardListener = (event) => {
-        if (document._keyboardListeners && document._keyboardListeners[event]) {
-            document.removeEventListener(
-                event, 
-                document._keyboardListeners[event],
-            );
-            delete document._keyboardListeners[event];
+        if (this.#keyboardListeners[event]) {
+            document.removeEventListener(event, this.#keyboardListeners[event]);
+            delete this.#keyboardListeners[event];
         }
     };
 
