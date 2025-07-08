@@ -1,17 +1,5 @@
 import { InputController } from "./input-controller.js";
 
-const keyNames = {
-    32: "Space",
-    37: "ArrLeft",
-    38: "ArrUp",
-    39: "ArrRight",
-    40: "ArrDown",
-    65: "A",
-    68: "W",
-    83: "D",
-    87: "S",
-};
-
 const inputController = new InputController({
     "left": { keys: [37, 65] },
     "up": { keys: [38, 87] },
@@ -70,19 +58,6 @@ function renderActionList() {
                         <button id="disable-${actionName}">disable</button>
                     </div>
                 </div>
-            </li>
-        `;
-    });
-}
-
-function renderKeyList() {
-    const keyList = document.querySelector("#keys");
-    keyList.innerHTML = "";
-    
-    Object.keys(inputController.getKeys()).forEach(key => {
-        keyList.innerHTML += `
-            <li>
-                <span id="key-${key}">${keyNames[key]}</span> 
             </li>
         `;
     });
@@ -149,18 +124,11 @@ function addStatusListeners() {
 }
 
 renderActionList();
-renderKeyList();
 addStatusListeners();
 
 function updateActionActive(actionName) {
     document.querySelector(`#action-${actionName}`).setAttribute(
         "class", inputController.isActionActive(actionName) ? "active" : ""
-    );
-}
-
-function updateKeyActive(keyCode) {
-    document.querySelector(`#key-${keyCode}`).setAttribute(
-        "class", inputController.isKeyPressed(keyCode) ? "active" : ""
     );
 }
 
@@ -174,22 +142,8 @@ const moving = {
     "down": 0,
 };
 
-function isMoving() {
-    const res = !Object.values(moving).every(value => value === 0);
-    console.log(res)
-    console.log(Object.values(moving))
-    return res;
-}
-
 function moveBox() {
-    // if (!isMoving()) return;
-
-    // if (action === "space") {
-    //     box.style.backgroundColor = box.style.backgroundColor === "red" ? "black" : "red";
-    //     return;
-    // }
-
-    // console.log(inputController.isActionActive(action), action)
+    box.style.backgroundColor = inputController.isActionActive("space") ? "red" : "black";
 
     const shift = { x: 0, y: 0 };
 
@@ -213,13 +167,11 @@ requestAnimationFrame(moveBox);
 box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
     moving[e.detail.action] += 1;
     updateActionActive(e.detail.action);
-    updateKeyActive(e.detail.keyCode);
 });
 
 box.addEventListener(inputController.ACTION_DEACTIVATED, (e) => {
     moving[e.detail.action] -= 1;
     updateActionActive(e.detail.action);
-    updateKeyActive(e.detail.keyCode);
 });
 
 document.querySelector("#bind-space").addEventListener("click", () => {
@@ -229,6 +181,9 @@ document.querySelector("#bind-space").addEventListener("click", () => {
         }
     });
     renderActionList();
-    renderKeyList();
     addStatusListeners();
+});
+
+document.querySelector("#check-key").addEventListener("click", () => {
+    console.log(`K is ${inputController.isKeyPressed(75) ? "" : "not "}pressed`);
 });

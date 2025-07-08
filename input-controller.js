@@ -23,10 +23,6 @@ export class InputController {
                 enabled: actionsToBind[actionName].enabled ?? true,
                 active: new Set(),
             };
-
-            actionsToBind[actionName].keys.forEach((key) => {
-                this.#keys[key] = { active: false };
-            });
         });
     }
 
@@ -39,6 +35,8 @@ export class InputController {
     }
 
     #keyboardHandler = (event, actionEvent, target) => {
+        this.#keys[event.keyCode] = actionEvent === this.ACTION_ACTIVATED;
+
         const action = Object.keys(this.#actions).find(action => 
             this.#actions[action].keys.includes(event.keyCode)
         );
@@ -51,14 +49,12 @@ export class InputController {
 
         if (actionEvent === this.ACTION_DEACTIVATED) {
             this.#actions[action].active.delete(event.keyCode);
-            // this.#keys[event.keyCode].active = false;
         }
 
         if (this.#actions[action].active.has(event.keyCode)) return;
 
         if (actionEvent === this.ACTION_ACTIVATED) {
             this.#actions[action].active.add(event.keyCode);
-            // this.#keys[event.keyCode].active = true;
         }
 
         target.dispatchEvent(
@@ -103,11 +99,13 @@ export class InputController {
     }
 
     isActionActive(action) {
-        return this.#actions[action].active.size > 0;
+        if (this.#actions[action] !== undefined) {
+            return this.#actions[action].active.size > 0;
+        }
     }
 
     isKeyPressed(keyCode) {
-        return this.#keys[keyCode].active;
+        return this.#keys[keyCode];
     }
 
     getActions() {
