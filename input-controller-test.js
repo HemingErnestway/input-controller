@@ -1,5 +1,17 @@
 import { InputController } from "./input-controller.js";
 
+const keyNames = {
+    32: "Space",
+    37: "ArrLeft",
+    38: "ArrUp",
+    39: "ArrRight",
+    40: "ArrDown",
+    65: "A",
+    68: "W",
+    83: "D",
+    87: "S",
+};
+
 const inputController = new InputController({
     "left": { keys: [37, 65], enabled: false },
     "up": { keys: [38, 87] },
@@ -41,11 +53,10 @@ function updateStatuses() {
 }
 
 function renderActionList() {
-    const actions = inputController.getActions();
     const actionList = document.querySelector("#actions");
     actionList.innerHTML = "";
 
-    Object.keys(actions).forEach(actionName => {
+    Object.keys(inputController.getActions()).forEach(actionName => {
         actionList.innerHTML += `
             <li>
                 <div class="wrapper">
@@ -58,6 +69,19 @@ function renderActionList() {
                         <button id="disable-${actionName}">disable</button>
                     </div>
                 </div>
+            </li>
+        `;
+    });
+}
+
+function renderKeyList() {
+    const keyList = document.querySelector("#keys");
+    keyList.innerHTML = "";
+    
+    Object.keys(inputController.getKeys()).forEach(key => {
+        keyList.innerHTML += `
+            <li>
+                <span id="key-${key}">${keyNames[key]}</span> 
             </li>
         `;
     });
@@ -112,6 +136,7 @@ function addStatusListeners() {
 }
 
 renderActionList();
+renderKeyList();
 addStatusListeners();
 
 const coords = { x: 0, y: 0 };
@@ -122,8 +147,14 @@ function updateActionActive(action) {
     actionActive.textContent = inputController.isActionActive(action) ? "A" : "";
 }
 
+function updateKeyActive(keyCode) {
+    const key = document.querySelector(`#key-${keyCode}`);
+    key.setAttribute("class", inputController.isKeyPressed(keyCode) ? "active" : "");
+}
+
 box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
     updateActionActive(e.detail.action);
+    updateKeyActive(e.detail.keyCode);
 
     if (e.detail.action === "space") {
         box.style.backgroundColor = box.style.backgroundColor === "red" ? "black" : "red";
@@ -147,6 +178,7 @@ box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
 
 box.addEventListener(inputController.ACTION_DEACTIVATED, (e) => {
     updateActionActive(e.detail.action);
+    updateKeyActive(e.detail.keyCode);
 });
 
 document.querySelector("#bind-space").addEventListener("click", () => {
@@ -156,7 +188,6 @@ document.querySelector("#bind-space").addEventListener("click", () => {
         }
     });
     renderActionList();
+    renderKeyList();
     addStatusListeners();
 });
-
-// document.addEventListener("keydown", (e) => console.log(e.keyCode))

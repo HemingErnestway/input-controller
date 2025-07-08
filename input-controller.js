@@ -5,6 +5,7 @@ export class InputController {
     ACTION_DEACTIVATED = "input-controller:action-deactivated";
 
     #actions = {};
+    #keys = {};
 
     constructor(actionsToBind = {}, target = null) {
         this.bindActions(actionsToBind);
@@ -21,6 +22,10 @@ export class InputController {
                 enabled: actionsToBind[actionName].enabled ?? true,
                 active: false,
             };
+
+            actionsToBind[actionName].keys.forEach((key) => {
+                this.#keys[key] = { active: false };
+            });
         });
     }
 
@@ -44,12 +49,14 @@ export class InputController {
         }
 
         this.#actions[action].active = actionEvent === this.ACTION_ACTIVATED;
+        this.#keys[event.keyCode].active = actionEvent === this.ACTION_ACTIVATED;
 
         target.dispatchEvent(
             new CustomEvent(actionEvent, {
                 detail: { 
                     action,
                     enabled: this.#actions[action].enabled,
+                    keyCode: event.keyCode,
                 },
             })
         );
@@ -95,9 +102,14 @@ export class InputController {
     }
 
     isKeyPressed(keyCode) {
+        return this.#keys[keyCode].active;
     }
 
     getActions() {
         return this.#actions;
+    }
+
+    getKeys() {
+        return this.#keys;
     }
 }
