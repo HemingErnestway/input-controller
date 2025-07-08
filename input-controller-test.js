@@ -1,8 +1,6 @@
 import { InputController } from "./input-controller.js";
 
-const inputController = new InputController();
-
-inputController.bindActions({
+const inputController = new InputController({
     "left": { keys: [37, 65], enabled: false },
     "up": { keys: [38, 87] },
     "right": { keys: [39, 68] },

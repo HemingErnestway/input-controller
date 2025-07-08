@@ -7,6 +7,11 @@ export class InputController {
     #actions = {};
 
     constructor(actionsToBind = {}, target = null) {
+        this.bindActions(actionsToBind);
+
+        if (target) {
+            this.attach(target);
+        }
     }
 
     bindActions(actionsToBind) {
