@@ -88,11 +88,13 @@ export class InputController {
     };
 
     attach(target, dontEnable = false) {
+        this.enabled = !dontEnable;
         this.#addKeyboardListener("keydown", this.ACTION_ACTIVATED, target);
         this.#addKeyboardListener("keyup", this.ACTION_DEACTIVATED, target);
     }
 
     detach() {
+        this.enabled = false;
         this.#removeKeyboardListener("keydown");
         this.#removeKeyboardListener("keyup");
     }
