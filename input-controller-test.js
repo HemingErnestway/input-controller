@@ -145,8 +145,14 @@ function moveBox() {
     if (inputController.isActionActive("right")) shift.x += step;
     if (inputController.isActionActive("down")) shift.y += step;
 
+    if (shift.x !== 0 && shift.y !== 0) {
+        shift.x /= Math.sqrt(2);
+        shift.y /= Math.sqrt(2);
+    }
+
     coords.x += shift.x;
     coords.y += shift.y;
+
     box.style.position = "absolute";
     box.style.left = `${coords.x}px`;
     box.style.top = `${coords.y}px`;
