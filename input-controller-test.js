@@ -1,11 +1,28 @@
+import { MousePlugin } from "./controller-plugin.js";
 import { InputController } from "./input-controller.js";
 
 const inputController = new InputController({
-    "left": { keys: [37, 65] },
-    "up": { keys: [38, 87] },
-    "right": { keys: [39, 68] },
-    "down": { keys: [40, 83] },
+    "left": { 
+        keys: [37, 65],
+        mouseButtons: [0],
+    },
+    "up": { 
+        keys: [38, 87],
+        mouseButtons: [],
+    },
+    "right": { 
+        keys: [39, 68],
+        mouseButtons: [2],
+    },
+    "down": { 
+        keys: [40, 83],
+        mouseButtons: [],
+    },
 });
+
+inputController.addPlugins([
+    new MousePlugin(),
+]);
 
 function attachBox() {
     const box = document.querySelector("#box");
