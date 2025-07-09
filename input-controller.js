@@ -7,6 +7,7 @@ export class InputController {
     #actions = {};
     #keys = {};
     #keyboardListeners = {};
+    #actionKeys = {};
 
     constructor(actionsToBind = {}, target = null) {
         this.bindActions(actionsToBind);
@@ -21,8 +22,10 @@ export class InputController {
             this.#actions[actionName] = {
                 keys: actionsToBind[actionName].keys,
                 enabled: actionsToBind[actionName].enabled ?? true,
-                active: new Set(),
+                active: false,
             };
+
+            this.#actionKeys[actionName] = new Set();
         });
     }
 
@@ -48,13 +51,20 @@ export class InputController {
         }
 
         if (actionEvent === this.ACTION_DEACTIVATED) {
-            this.#actions[action].active.delete(event.keyCode);
+            this.#actionKeys[action].delete(event.keyCode);
+            if (this.#actionKeys[action].size === 0) {
+                this.#actions[action].active = false;
+            }
         }
 
-        if (this.#actions[action].active.has(event.keyCode)) return;
-
         if (actionEvent === this.ACTION_ACTIVATED) {
-            this.#actions[action].active.add(event.keyCode);
+            this.#actionKeys[action].add(event.keyCode);
+        }
+
+        if (this.#actions[action].active) return;
+        
+        if (actionEvent === this.ACTION_ACTIVATED) {
+            this.#actions[action].active = true;
         }
 
         target.dispatchEvent(
@@ -62,7 +72,6 @@ export class InputController {
                 detail: { 
                     action,
                     enabled: this.#actions[action].enabled,
-                    keyCode: event.keyCode,
                 },
             })
         );
@@ -100,7 +109,7 @@ export class InputController {
 
     isActionActive(action) {
         if (this.#actions[action] !== undefined) {
-            return this.#actions[action].active.size > 0;
+            return this.#actions[action].active;
         }
     }
 

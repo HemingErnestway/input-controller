@@ -135,13 +135,6 @@ function updateActionActive(actionName) {
 const coords = { x: 0, y: 0 };
 const step = 5;
 
-const moving = {
-    "left": 0,
-    "up": 0,
-    "right": 0,
-    "down": 0,
-};
-
 function moveBox() {
     box.style.backgroundColor = inputController.isActionActive("space") ? "red" : "black";
 
@@ -165,12 +158,12 @@ function moveBox() {
 requestAnimationFrame(moveBox);
 
 box.addEventListener(inputController.ACTION_ACTIVATED, (e) => {
-    moving[e.detail.action] += 1;
+    console.log("activated", e.detail.action);
     updateActionActive(e.detail.action);
 });
 
 box.addEventListener(inputController.ACTION_DEACTIVATED, (e) => {
-    moving[e.detail.action] -= 1;
+    console.log("deactivated", e.detail.action);
     updateActionActive(e.detail.action);
 });
 
