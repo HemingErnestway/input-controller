@@ -95,16 +95,32 @@ export class InputController {
         }
     };
 
+    #windowFocusHandler = () => {
+        this.focused = true; 
+    };
+
+    #windowUnfocusHandler = () => {
+        this.focused = false;
+    };
+
     attach(target, dontEnable = false) {
         this.enabled = !dontEnable;
+
         this.#addKeyboardListener("keydown", this.ACTION_ACTIVATED, target);
         this.#addKeyboardListener("keyup", this.ACTION_DEACTIVATED, target);
+
+        window.addEventListener("focus", this.#windowFocusHandler);
+        window.addEventListener("blur", this.#windowUnfocusHandler);
     }
 
     detach() {
         this.enabled = false;
+
         this.#removeKeyboardListener("keydown");
         this.#removeKeyboardListener("keyup");
+
+        window.removeEventListener("focus", this.#windowFocusHandler);
+        window.removeEventListener("blur", this.#windowUnfocusHandler);
     }
 
     isActionActive(action) {

@@ -98,7 +98,7 @@ function addStatusListeners() {
     document.querySelector("#detach-controller").addEventListener("click", () =>  {
         boxAttached = detachBox();
         updateStatuses();
-    });
+    })
 
     document.querySelector("#enable-controller").addEventListener("click", () => {
         inputController.enabled = true;
@@ -147,7 +147,6 @@ function moveBox() {
 
     coords.x += shift.x;
     coords.y += shift.y;
-
     box.style.position = "absolute";
     box.style.left = `${coords.x}px`;
     box.style.top = `${coords.y}px`;
