@@ -194,6 +194,7 @@ document.querySelector("#bind-space").addEventListener("click", () => {
     inputController.bindActions({
         "space": {
             keys: [32],
+            mouseButtons: [1],
         }
     });
     renderActionList();

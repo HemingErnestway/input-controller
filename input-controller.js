@@ -9,14 +9,19 @@ export class InputController {
     ACTION_ACTIVATED = "input-controller:action-activated";
     ACTION_DEACTIVATED = "input-controller:action-deactivated";
 
-    #keys = {}; 
-    #actionsToBind = {};
+    // #keys = {};
+
+    /** @type {Object.<string, Object>} */ #actionsToBind = {};
 
     /** @type {Object.<string, ControllerPlugin>} */
     #plugins = {
         "keyboard": new KeyboardPlugin(), // default
     };
 
+    /**
+     * @param {Object.<string, Object>} actionsToBind 
+     * @param {HTMLElement | null} target 
+     */
     constructor(actionsToBind = {}, target = null) {
         this.#actionsToBind = actionsToBind;
         this.bindActions(actionsToBind);
@@ -36,6 +41,9 @@ export class InputController {
         this.bindActions(this.#actionsToBind);
     }
 
+    /**
+     * @param {Object.<string, Object>} actionsToBind 
+     */
     bindActions(actionsToBind) {
         Object.keys(actionsToBind).forEach(actionName => {
             Object.keys(this.#plugins).forEach(pluginName => {
@@ -52,26 +60,31 @@ export class InputController {
         });
     }
 
+    /**
+     * @param {string} actionName 
+     */
     enableAction(actionName) {
         Object.keys(this.#plugins).forEach(pluginName => {
             this.#plugins[pluginName].enableAction(actionName);
         });
     }
 
+    /**
+     * @param {string} actionName 
+     */
     disableAction(actionName) {
         Object.keys(this.#plugins).forEach(pluginName => {
             this.#plugins[pluginName].disableAction(actionName);
         });
     }
 
-    #windowFocusHandler = () => {
-        this.focused = true; 
-    };
+    #windowFocusHandler = () => this.focused = true;
+    #windowUnfocusHandler = () => this.focused = false;
 
-    #windowUnfocusHandler = () => {
-        this.focused = false;
-    };
-
+    /**
+     * @param {HTMLElement} target 
+     * @param {boolean} dontEnable 
+     */
     attach(target, dontEnable = false) {
         this.enabled = !dontEnable;
 
@@ -94,14 +107,20 @@ export class InputController {
         window.removeEventListener("blur", this.#windowUnfocusHandler);
     }
 
+    /**
+     * @param {string} actionName 
+     */
     isActionActive(actionName) {
         return Object.keys(this.#plugins).some(pluginName => 
             this.#plugins[pluginName].actions[actionName]?.active
         );
     }
 
+    /**
+     * @param {number} keyCode 
+     */
     isKeyPressed(keyCode) {
-        return this.#keys[keyCode];
+        // return this.#keys[keyCode];
     }
 
     getActions() {
