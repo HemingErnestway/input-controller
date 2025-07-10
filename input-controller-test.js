@@ -205,3 +205,7 @@ document.querySelector("#bind-space").addEventListener("click", () => {
 document.querySelector("#check-key").addEventListener("click", () => {
     console.log(`K is ${inputController.isKeyPressed(75) ? "" : "not "}pressed`);
 });
+
+document.querySelector("#game").addEventListener("blur", function() {
+    this.focus();
+});

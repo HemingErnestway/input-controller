@@ -55,7 +55,7 @@ export class ControllerPlugin {
      * @param {string} actionEvent 
      * @param {HTMLElement} target 
      */
-    actionHandler = (e, actionEvent, target) => {
+    actionHandler(e, actionEvent, target) {
         const actionName = Object.keys(this.actions[this.name]).find(actionName => 
             this.actions[this.name][actionName].keys.includes(e[this.eventKey])
         );
@@ -142,5 +142,11 @@ export class ControllerPlugin {
     detachControllerListeners() {
         this.removeControllerListener(this.eventActivated);
         this.removeControllerListener(this.eventDeactivated);
+    }
+
+    /**
+     * @param {number} key 
+     */
+    isKeyPressed(key) {
     }
 }

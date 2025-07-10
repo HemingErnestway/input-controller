@@ -21,9 +21,8 @@ export class InputController {
     /** @type {Object.<string, Object.<string, Set<number>>>} */ 
     actionKeys = {};
 
-    // #keys = {}; ???
-
-    /** @type {Object.<string, Object>} */ #actionsToBind = {};
+    /** @type {Object.<string, Object>} */ 
+    #actionsToBind = {};
 
     /** @type {Object.<string, ControllerPlugin>} */
     #plugins = {
@@ -148,7 +147,7 @@ export class InputController {
      * @param {number} keyCode 
      */
     isKeyPressed(keyCode) {
-        // return this.#keys[keyCode];
+        return this.#plugins["keys"].isKeyPressed(keyCode);
     }
 
     getActions() {
