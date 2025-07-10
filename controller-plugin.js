@@ -2,9 +2,9 @@
 
 export class ControllerPlugin {
     /** @type {string} */ name;
-    /** @type {string} */ eventKeyName;
-    /** @type {string} */ eventActivatedName;
-    /** @type {string} */ eventDeactivatedName;
+    /** @type {string} */ eventKey;
+    /** @type {string} */ eventActivated;
+    /** @type {string} */ eventDeactivated;
 
     /** @type {string} */ actionActivated;
     /** @type {string} */ actionDeactivated;
@@ -56,7 +56,7 @@ export class ControllerPlugin {
      */
     actionHandler = (e, actionEvent, target) => {
         const actionName = Object.keys(this.actions).find(actionName => 
-            this.actions[actionName].keys.includes(e[this.eventKeyName])
+            this.actions[actionName].keys.includes(e[this.eventKey])
         );
 
         // TODO: add InputController.enabled check somehow
@@ -65,14 +65,14 @@ export class ControllerPlugin {
         }
 
         if (actionEvent === this.actionDeactivated) {
-            this.actionKeys[actionName].delete(e[this.eventKeyName]);
+            this.actionKeys[actionName].delete(e[this.eventKey]);
             if (this.actionKeys[actionName].size === 0) {
                 this.actions[actionName].active = false;
             }
         }
 
         if (actionEvent === this.actionActivated) {
-            this.actionKeys[actionName].add(e[this.eventKeyName]);
+            this.actionKeys[actionName].add(e[this.eventKey]);
         }
 
         if (this.actions[actionName].active) return;
@@ -121,12 +121,12 @@ export class ControllerPlugin {
      * @param {HTMLElement} target 
      */
     attachControllerListeners(target) {
-        this.addControllerListener(this.eventActivatedName,this.actionActivated, target);
-        this.addControllerListener(this.eventDeactivatedName, this.actionDeactivated, target);
+        this.addControllerListener(this.eventActivated,this.actionActivated, target);
+        this.addControllerListener(this.eventDeactivated, this.actionDeactivated, target);
     }
 
     detachControllerListeners() {
-        this.removeControllerListener(this.eventActivatedName);
-        this.removeControllerListener(this.eventDeactivatedName);
+        this.removeControllerListener(this.eventActivated);
+        this.removeControllerListener(this.eventDeactivated);
     }
 }
