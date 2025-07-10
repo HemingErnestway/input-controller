@@ -1,9 +1,9 @@
 // @ts-check
-import { ACTION_ACTIVATED, ACTION_DEACTIVATED } from "./constants.js";
-
 export class ControllerPlugin {
     /** @type {string} */ name;
     /** @type {string} */ keysPropertyName;
+    /** @type {string} */ actionActivated;
+    /** @type {string} */ actionDeactivated;
 
     /** 
      * @typedef {object} Action
@@ -21,10 +21,14 @@ export class ControllerPlugin {
      * @param {number[]} keys 
      * @param {boolean} enabled 
      * @param {boolean} active 
+     * @param {string} actionActivated 
+     * @param {string} actionDeactivated 
      */
-    initAction(actionName, keys, enabled, active) {
+    initAction(actionName, keys, enabled, active, actionActivated, actionDeactivated) {
         this.actions[actionName] = { keys, enabled, active };
         this.actionKeys[actionName] = new Set();
+        this.actionActivated = actionActivated;
+        this.actionDeactivated = actionDeactivated;
     }
 
     /**
@@ -104,20 +108,20 @@ export class KeyboardPlugin extends ControllerPlugin {
             return;
         }
 
-        if (actionEvent === ACTION_DEACTIVATED) {
+        if (actionEvent === this.actionDeactivated) {
             this.actionKeys[actionName].delete(e.keyCode);
             if (this.actionKeys[actionName].size === 0) {
                 this.actions[actionName].active = false;
             }
         }
 
-        if (actionEvent === ACTION_ACTIVATED) {
+        if (actionEvent === this.actionActivated) {
             this.actionKeys[actionName].add(e.keyCode);
         }
 
         if (this.actions[actionName].active) return;
         
-        if (actionEvent === ACTION_ACTIVATED) {
+        if (actionEvent === this.actionActivated) {
             this.actions[actionName].active = true;
         }
 
@@ -135,8 +139,8 @@ export class KeyboardPlugin extends ControllerPlugin {
      * @param {HTMLElement} target 
      */
     attachControllerListeners(target) {
-        this.addControllerListener("keydown", ACTION_ACTIVATED, target);
-        this.addControllerListener("keyup", ACTION_DEACTIVATED, target);
+        this.addControllerListener("keydown", this.actionActivated, target);
+        this.addControllerListener("keyup", this.actionDeactivated, target);
     }
 
     detachControllerListeners() {
@@ -164,20 +168,20 @@ export class MousePlugin extends ControllerPlugin {
             return;
         }
 
-        if (actionEvent === ACTION_DEACTIVATED) {
+        if (actionEvent === this.actionDeactivated) {
             this.actionKeys[actionName].delete(e.button);
             if (this.actionKeys[actionName].size === 0) {
                 this.actions[actionName].active = false;
             }
         }
 
-        if (actionEvent === ACTION_ACTIVATED) {
+        if (actionEvent === this.actionActivated) {
             this.actionKeys[actionName].add(e.button);
         }
 
         if (this.actions[actionName].active) return;
         
-        if (actionEvent === ACTION_ACTIVATED) {
+        if (actionEvent === this.actionActivated) {
             this.actions[actionName].active = true;
         }
 
@@ -195,8 +199,8 @@ export class MousePlugin extends ControllerPlugin {
      * @param {HTMLElement} target 
      */
     attachControllerListeners(target) {
-        this.addControllerListener("mousedown", ACTION_ACTIVATED, target);
-        this.addControllerListener("mouseup", ACTION_DEACTIVATED, target);
+        this.addControllerListener("mousedown", this.actionActivated, target);
+        this.addControllerListener("mouseup", this.actionDeactivated, target);
     }
 
     detachControllerListeners() {

@@ -42,6 +42,8 @@ export class InputController {
                     keys,
                     actionsToBind[actionName].enabled ?? true,
                     false,
+                    this.ACTION_ACTIVATED,
+                    this.ACTION_DEACTIVATED,
                 );
             });
         });
