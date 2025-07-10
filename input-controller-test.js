@@ -1,5 +1,5 @@
-import { MousePlugin } from "./controller-plugin.js";
 import { InputController } from "./input-controller.js";
+import { MousePlugin } from "./plugins/mouse-plugin.js";
 
 const inputController = new InputController({
     "left": { 
@@ -24,8 +24,9 @@ inputController.addPlugins([
     new MousePlugin(),
 ]);
 
+const box = document.querySelector("#box");
+
 function attachBox() {
-    const box = document.querySelector("#box");
     inputController.attach(box);
     return true;
 }

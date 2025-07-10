@@ -1,4 +1,7 @@
-import { ControllerPlugin, KeyboardPlugin } from "./controller-plugin.js";
+// @ts-check
+
+import { ControllerPlugin } from "./controller-plugin.js";
+import { KeyboardPlugin } from "./plugins/keyboard-plugin.js";
 
 export class InputController {
     enabled = true;
