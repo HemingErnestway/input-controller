@@ -1,6 +1,6 @@
 // @ts-check
 
-import { actions, ControllerPlugin } from "./controller-plugin.js";
+import { ControllerPlugin } from "./controller-plugin.js";
 import { KeyboardPlugin } from "./plugins/keyboard-plugin.js";
 
 export class InputController {
@@ -9,7 +9,19 @@ export class InputController {
     ACTION_ACTIVATED = "input-controller:action-activated";
     ACTION_DEACTIVATED = "input-controller:action-deactivated";
 
-    // #keys = {};
+    /** 
+     * @typedef {object} Action
+     * @property {number[]} keys
+     * @property {boolean} enabled
+     * @property {boolean} active
+     */ 
+    /** @type {Object.<string, Object.<string, Action>>} */
+    actions = {};
+
+    /** @type {Object.<string, Object.<string, Set<number>>>} */ 
+    actionKeys = {};
+
+    // #keys = {}; ???
 
     /** @type {Object.<string, Object>} */ #actionsToBind = {};
 
@@ -45,17 +57,32 @@ export class InputController {
      * @param {Object.<string, Object>} actionsToBind 
      */
     bindActions(actionsToBind) {
-        Object.keys(actionsToBind).forEach(actionName => {
-            Object.keys(this.#plugins).forEach(pluginName => {
-                this.#plugins[pluginName].initAction(
-                    actionName,
-                    actionsToBind[actionName][this.#plugins[pluginName].name],
-                    actionsToBind[actionName].enabled ?? true,
-                    false,
-                    this.ACTION_ACTIVATED,
-                    this.ACTION_DEACTIVATED,
-                );
+        Object.keys(this.#plugins).forEach(pluginName => {
+            Object.keys(actionsToBind).forEach(actionName => {
+                if (this.actions[pluginName] === undefined) {
+                    this.actions[pluginName] = {};
+                }
+
+                this.actions[pluginName][actionName] = { 
+                    keys: actionsToBind[actionName][this.#plugins[pluginName].name],
+                    enabled: actionsToBind[actionName].enabled ?? true,
+                    active: false,
+                };
+
+                if (this.actionKeys[pluginName] === undefined) {
+                    this.actionKeys[pluginName] = {};
+                }
+
+                this.actionKeys[pluginName][actionName] = new Set();
             });
+
+            this.#plugins[pluginName].actionActivated = this.ACTION_ACTIVATED;
+            this.#plugins[pluginName].actionDeactivated = this.ACTION_DEACTIVATED;
+
+            this.#plugins[pluginName].initPlugin(
+                this.actions,
+                this.actionKeys,
+            );
         });
     }
 
@@ -111,7 +138,7 @@ export class InputController {
      */
     isActionActive(actionName) {
         return Object.keys(this.#plugins).some(pluginName => 
-            actions[pluginName][actionName]?.active
+            this.actions[pluginName][actionName]?.active
         );
     }
 
@@ -123,6 +150,6 @@ export class InputController {
     }
 
     getActions() {
-        return actions["keys"];
+        return this.actions["keys"];
     }
 }
