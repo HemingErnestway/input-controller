@@ -19,14 +19,20 @@
             background-color: black; 
         }
 
+        #game {
+            background-color: lightgray;
+            height: 100vh;
+        }
+
         #info { 
             position: absolute; 
             right: 10px; 
-            top: 10px; 
+            bottom: 10px; 
             border: 1px solid;
             padding: 10px;
             font-family: monospace;
             font-size: 16px;
+            background-color: white;
         }
 
         li .wrapper {
@@ -51,7 +57,9 @@
     </style>
 </head>
 <body>
-    <div id="box"></div>
+    <div id="game" oncontextmenu="return false;">
+        <div id="box"></div>
+    </div>
     <div id="info">
         <p>actions</p>
         <ul id="actions"></ul>

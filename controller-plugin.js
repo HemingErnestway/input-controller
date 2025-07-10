@@ -155,9 +155,6 @@ export class MousePlugin extends ControllerPlugin {
      * @param {HTMLElement} target 
      */
     actionHandler = (e, actionEvent, target) => {
-        console.log(e.button)
-        console.log(this.actions)
-
         const actionName = Object.keys(this.actions).find(actionName => 
             this.actions[actionName].keys.includes(e.button)
         );
