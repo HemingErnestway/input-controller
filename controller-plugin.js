@@ -2,7 +2,6 @@
 
 export class ControllerPlugin {
     /** @type {string} */ name;
-    /** @type {string} */ keysPropertyName;
     /** @type {string} */ eventKeyName;
     /** @type {string} */ eventActivatedName;
     /** @type {string} */ eventDeactivatedName;

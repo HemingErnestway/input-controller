@@ -3,8 +3,7 @@
 import { ControllerPlugin } from "../controller-plugin.js";
 
 export class KeyboardPlugin extends ControllerPlugin {
-    name = "keyboard";
-    keysPropertyName = "keys";
+    name = "keys";
     eventKeyName = "keyCode";
     eventActivatedName = "keydown";
     eventDeactivatedName = "keyup";

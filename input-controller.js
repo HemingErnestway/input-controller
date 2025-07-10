@@ -15,7 +15,7 @@ export class InputController {
 
     /** @type {Object.<string, ControllerPlugin>} */
     #plugins = {
-        "keyboard": new KeyboardPlugin(), // default
+        "keys": new KeyboardPlugin(), // default
     };
 
     /**
@@ -47,10 +47,9 @@ export class InputController {
     bindActions(actionsToBind) {
         Object.keys(actionsToBind).forEach(actionName => {
             Object.keys(this.#plugins).forEach(pluginName => {
-                const keys = actionsToBind[actionName][this.#plugins[pluginName].keysPropertyName];
                 this.#plugins[pluginName].initAction(
                     actionName,
-                    keys,
+                    actionsToBind[actionName][this.#plugins[pluginName].name],
                     actionsToBind[actionName].enabled ?? true,
                     false,
                     this.ACTION_ACTIVATED,
@@ -124,6 +123,6 @@ export class InputController {
     }
 
     getActions() {
-        return this.#plugins["keyboard"].actions;
+        return this.#plugins["keys"].actions;
     }
 }
