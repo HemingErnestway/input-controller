@@ -1,5 +1,17 @@
 // @ts-check
 
+/** 
+ * @typedef {object} Action
+ * @property {number[]} keys
+ * @property {boolean} enabled
+ * @property {boolean} active
+ */ 
+/** @type {Object.<string, Object.<string, Action>>} */
+export const actions = {};
+
+/** @type {Object.<string, Object.<string, Set<number>>>} */ 
+const actionKeys = {};
+
 export class ControllerPlugin {
     /** @type {string} */ name;
     /** @type {string} */ eventKey;
@@ -9,16 +21,8 @@ export class ControllerPlugin {
     /** @type {string} */ actionActivated;
     /** @type {string} */ actionDeactivated;
 
-    /** 
-     * @typedef {object} Action
-     * @property {number[]} keys
-     * @property {boolean} enabled
-     * @property {boolean} active
-     */ 
-    /** @type {Object.<string, Action>} */ actions = {};
-
-    /** @type {Object.<string, Set<number>>} */ actionKeys = {};
-    /** @type {Object.<string, EventListener>} */ controllerListeners = {};
+    /** @type {Object.<string, EventListener>} */ 
+    controllerListeners = {};
 
     /** 
      * @param {string} actionName 
@@ -29,8 +33,16 @@ export class ControllerPlugin {
      * @param {string} actionDeactivated 
      */
     initAction(actionName, keys, enabled, active, actionActivated, actionDeactivated) {
-        this.actions[actionName] = { keys, enabled, active };
-        this.actionKeys[actionName] = new Set();
+        if (actions[this.name] === undefined) {
+            actions[this.name] = {};
+        }
+        actions[this.name][actionName] = { keys, enabled, active };
+
+        if (actionKeys[this.name] === undefined) {
+            actionKeys[this.name] = {};
+        }
+        actionKeys[this.name][actionName] = new Set();
+
         this.actionActivated = actionActivated;
         this.actionDeactivated = actionDeactivated;
     }
@@ -39,14 +51,14 @@ export class ControllerPlugin {
      * @param {string} actionName 
      */
     enableAction(actionName) {
-        this.actions[actionName].enabled = true;
+        actions[this.name][actionName].enabled = true;
     }
 
     /**
      * @param {string} actionName 
      */
     disableAction(actionName) {
-        this.actions[actionName].enabled = false;
+        actions[this.name][actionName].enabled = false;
     }
 
     /**
@@ -55,37 +67,47 @@ export class ControllerPlugin {
      * @param {HTMLElement} target 
      */
     actionHandler = (e, actionEvent, target) => {
-        const actionName = Object.keys(this.actions).find(actionName => 
-            this.actions[actionName].keys.includes(e[this.eventKey])
+        const actionName = Object.keys(actions[this.name]).find(actionName => 
+            actions[this.name][actionName].keys.includes(e[this.eventKey])
         );
 
-        // TODO: add InputController.enabled check somehow
-        if (actionName === undefined || !this.actions[actionName].enabled) {
+        if (actionName === undefined || !actions[this.name][actionName].enabled) {
             return;
         }
 
         if (actionEvent === this.actionDeactivated) {
-            this.actionKeys[actionName].delete(e[this.eventKey]);
-            if (this.actionKeys[actionName].size === 0) {
-                this.actions[actionName].active = false;
+            actionKeys[this.name][actionName].delete(e[this.eventKey]);
+
+            const allInactive = Object.keys(actionKeys).every(
+                pluginName => actionKeys[pluginName][actionName].size === 0
+            );
+
+            if (allInactive) {
+                Object.keys(actions).forEach(pluginName => {
+                    actions[pluginName][actionName].active = false;
+                });
             }
         }
 
         if (actionEvent === this.actionActivated) {
-            this.actionKeys[actionName].add(e[this.eventKey]);
+            actionKeys[this.name][actionName].add(e[this.eventKey]);
         }
+        
+        const isAlreadyActive = Object.keys(actions).some(
+            pluginName => actions[pluginName][actionName].active
+        );
 
-        if (this.actions[actionName].active) return;
+        if (isAlreadyActive) return;
         
         if (actionEvent === this.actionActivated) {
-            this.actions[actionName].active = true;
+            actions[this.name][actionName].active = true;
         }
 
         target.dispatchEvent(
             new CustomEvent(actionEvent, {
                 detail: { 
                     action: actionName,
-                    enabled: this.actions[actionName].enabled,
+                    enabled: actions[this.name][actionName].enabled,
                 },
             })
         );

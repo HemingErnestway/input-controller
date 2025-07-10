@@ -1,6 +1,6 @@
 // @ts-check
 
-import { ControllerPlugin } from "./controller-plugin.js";
+import { actions, ControllerPlugin } from "./controller-plugin.js";
 import { KeyboardPlugin } from "./plugins/keyboard-plugin.js";
 
 export class InputController {
@@ -111,7 +111,7 @@ export class InputController {
      */
     isActionActive(actionName) {
         return Object.keys(this.#plugins).some(pluginName => 
-            this.#plugins[pluginName].actions[actionName]?.active
+            actions[pluginName][actionName]?.active
         );
     }
 
@@ -123,6 +123,6 @@ export class InputController {
     }
 
     getActions() {
-        return this.#plugins["keys"].actions;
+        return actions["keys"];
     }
 }
