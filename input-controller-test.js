@@ -25,9 +25,10 @@ inputController.addPlugins([
 ]);
 
 const box = document.querySelector("#box");
+const game = document.querySelector("#game");
 
 function attachBox() {
-    inputController.attach(box);
+    inputController.attach(box, game);
     return true;
 }
 

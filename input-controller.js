@@ -32,14 +32,15 @@ export class InputController {
 
     /**
      * @param {Object.<string, Object>} actionsToBind 
-     * @param {HTMLElement | null} target 
+     * @param {HTMLElement | null} characterTarget 
+     * @param {HTMLElement | null} gameTarget 
      */
-    constructor(actionsToBind = {}, target = null) {
+    constructor(actionsToBind = {}, characterTarget = null, gameTarget = null) {
         this.#actionsToBind = actionsToBind;
         this.bindActions(actionsToBind);
 
-        if (target) {
-            this.attach(target);
+        if (characterTarget && gameTarget) {
+            this.attach(characterTarget, gameTarget);
         }
     }
 
@@ -79,10 +80,7 @@ export class InputController {
             this.#plugins[pluginName].actionActivated = this.ACTION_ACTIVATED;
             this.#plugins[pluginName].actionDeactivated = this.ACTION_DEACTIVATED;
 
-            this.#plugins[pluginName].initPlugin(
-                this.actions,
-                this.actionKeys,
-            );
+            this.#plugins[pluginName].initPlugin(this.actions, this.actionKeys);
         });
     }
 
@@ -108,14 +106,18 @@ export class InputController {
     #windowUnfocusHandler = () => this.focused = false;
 
     /**
-     * @param {HTMLElement} target 
+     * @param {HTMLElement} chracterTarget 
+     * @param {HTMLElement} gameTarget 
      * @param {boolean} dontEnable 
      */
-    attach(target, dontEnable = false) {
+    attach(chracterTarget, gameTarget, dontEnable = false) {
         this.enabled = !dontEnable;
 
         Object.keys(this.#plugins).forEach(pluginName => {
-            this.#plugins[pluginName].attachControllerListeners(target);
+            this.#plugins[pluginName].attachControllerListeners(
+                chracterTarget,
+                gameTarget,
+            );
         });
 
         window.addEventListener("focus", this.#windowFocusHandler);

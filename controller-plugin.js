@@ -9,6 +9,9 @@ export class ControllerPlugin {
     /** @type {string} */ actionActivated;
     /** @type {string} */ actionDeactivated;
 
+    /** @type {HTMLElement} */ characterTarget;
+    /** @type {HTMLElement} */ gameTarget;
+
     /** @type {Object.<string, EventListener>} */ 
     controllerListeners = {};
 
@@ -102,35 +105,38 @@ export class ControllerPlugin {
     /**
      * @param {string} event 
      * @param {string} actionEvent 
-     * @param {HTMLElement} target 
      */
-    addControllerListener = (event, actionEvent, target) => {
+    addControllerListener(event, actionEvent) {
         if (this.controllerListeners[event]) return; 
 
         const listener = (/** @type {Event} */ e) => {
-            this.actionHandler(e, actionEvent, target)
+            this.actionHandler(e, actionEvent, this.characterTarget);
         };
 
         this.controllerListeners[event] = listener;
-        document.addEventListener(event, listener);
+        this.gameTarget.addEventListener(event, listener);
     };
 
     /**
      * @param {string} event 
      */
-    removeControllerListener = (event) => {
+    removeControllerListener(event) {
         if (this.controllerListeners[event]) {
-            document.removeEventListener(event, this.controllerListeners[event]);
+            this.gameTarget.removeEventListener(event, this.controllerListeners[event]);
             delete this.controllerListeners[event];
         }
     };
 
     /**
-     * @param {HTMLElement} target 
+     * @param {HTMLElement} chracterTarget 
+     * @param {HTMLElement} gameTarget 
      */
-    attachControllerListeners(target) {
-        this.addControllerListener(this.eventActivated,this.actionActivated, target);
-        this.addControllerListener(this.eventDeactivated, this.actionDeactivated, target);
+    attachControllerListeners(chracterTarget, gameTarget) {
+        this.characterTarget = chracterTarget;
+        this.gameTarget = gameTarget;
+
+        this.addControllerListener(this.eventActivated, this.actionActivated);
+        this.addControllerListener(this.eventDeactivated, this.actionDeactivated);
     }
 
     detachControllerListeners() {
